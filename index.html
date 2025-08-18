@@ -2,10 +2,15 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌳 成長する木 - 本格運用版</title>
-    <meta name="description" content="美しく成長する木のビジュアライゼーション - レベル別成長過程">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🌳 成長する木 - 緊急修正版</title>
+    <meta name="description" content="美しく成長する木のビジュアライゼーション - 携帯・スマホ対応">
+    <meta name="theme-color" content="#87CEEB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="成長する木">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌳</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌳</text></svg>">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
@@ -14,14 +19,17 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
             font-family: 'Noto Sans JP', sans-serif;
             overflow-x: hidden;
+            overflow-y: auto;
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #98FB98 100%);
             min-height: 100vh;
             position: relative;
+            touch-action: pan-y;
         }
         
         .canvas-container {
@@ -36,10 +44,10 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 70%;
+            height: 75%;
             background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 30%, #F0F8FF 100%);
-            opacity: 0.8;
-            transition: all 3s ease-in-out;
+            opacity: 0.9;
+            transition: all 2s ease-in-out;
         }
         
         .sky.night {
@@ -49,8 +57,8 @@
         
         .sky-star {
             position: absolute;
-            width: 3px;
-            height: 3px;
+            width: 2px;
+            height: 2px;
             background: white;
             border-radius: 50%;
             opacity: 0;
@@ -59,22 +67,22 @@
         
         @keyframes twinkle {
             0% { opacity: 0.3; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1.1); }
         }
         
         .clouds {
             position: absolute;
-            top: 10%;
+            top: 8%;
             left: 0;
-            width: 100%;
-            height: 40%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300"><defs><filter id="blur"><feGaussianBlur stdDeviation="3"/></filter></defs><ellipse cx="200" cy="100" rx="80" ry="30" fill="white" opacity="0.6" filter="url(%23blur)"/><ellipse cx="400" cy="80" rx="100" ry="40" fill="white" opacity="0.5" filter="url(%23blur)"/><ellipse cx="700" cy="120" rx="90" ry="35" fill="white" opacity="0.4" filter="url(%23blur)"/><ellipse cx="1000" cy="90" rx="110" ry="45" fill="white" opacity="0.6" filter="url(%23blur)"/></svg>') repeat-x;
-            animation: cloudMove 60s linear infinite;
+            width: 120%;
+            height: 30%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200"><defs><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter></defs><ellipse cx="150" cy="60" rx="60" ry="20" fill="white" opacity="0.7" filter="url(%23blur)"/><ellipse cx="350" cy="50" rx="80" ry="25" fill="white" opacity="0.6" filter="url(%23blur)"/><ellipse cx="600" cy="70" rx="70" ry="22" fill="white" opacity="0.5" filter="url(%23blur)"/><ellipse cx="900" cy="55" rx="85" ry="28" fill="white" opacity="0.7" filter="url(%23blur)"/></svg>') repeat-x;
+            animation: cloudMove 40s linear infinite;
         }
         
         @keyframes cloudMove {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-100px); }
+            100% { transform: translateX(-80px); }
         }
         
         .ground {
@@ -82,33 +90,49 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 30%;
+            height: 25%;
             background: linear-gradient(to bottom, #90EE90 0%, #8FBC8F 50%, #8B4513 100%);
-            opacity: 0.9;
-            filter: blur(1px);
+            opacity: 0.95;
         }
         
+        /* 🌳 木のコンテナ - 緊急修正版（確実に表示） */
         .tree-container {
             position: absolute;
-            bottom: 25%;
+            bottom: 30%;
             left: 50%;
             transform: translateX(-50%);
-            width: min(800px, 90vw);
-            height: min(400px, 50vh);
+            width: 300px;
+            height: 300px;
+            z-index: 20;
+            border: 2px dashed rgba(255,0,0,0.3); /* デバッグ用枠線 */
         }
         
-        /* レベル0: 苗 */
+        /* デバッグ情報表示 */
+        .debug-tree {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 10px;
+            z-index: 30;
+        }
+        
+        /* レベル0: 苗 - 緊急修正版 */
         .tree-seedling {
             position: absolute;
-            bottom: 0;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             width: 4px;
-            height: 40px;
+            height: 30px;
             background: linear-gradient(to top, #8B4513 0%, #90EE90 100%);
             border-radius: 2px;
-            opacity: 0;
-            transition: all 2s ease-in-out;
+            opacity: 1; /* 強制表示 */
+            transition: all 1s ease-in-out;
+            z-index: 21;
         }
         
         .seedling-leaf {
@@ -120,60 +144,38 @@
             height: 15px;
             background: radial-gradient(ellipse, #90EE90 0%, #228B22 100%);
             border-radius: 50%;
-            opacity: 0;
-            transition: all 2s ease-in-out;
+            opacity: 1; /* 強制表示 */
+            transition: all 1s ease-in-out;
         }
         
-        /* レベル1-2: 幹 */
+        /* レベル1-6: 幹 - 緊急修正版 */
         .tree-trunk {
             position: absolute;
-            bottom: 0;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(to right, #8B4513 0%, #A0522D 50%, #8B4513 100%);
-            border-radius: 10px;
-            transition: all 2s ease-in-out;
-            filter: blur(0.5px);
-            opacity: 0;
+            border-radius: 8px;
+            transition: all 1s ease-in-out;
+            opacity: 1; /* 強制表示 */
+            z-index: 21;
         }
         
-        .trunk-level-1 {
-            width: 15px;
-            height: 80px;
-        }
+        .trunk-level-1 { width: 15px; height: 70px; }
+        .trunk-level-2 { width: 20px; height: 100px; }
+        .trunk-level-3 { width: 25px; height: 130px; }
+        .trunk-level-4 { width: 28px; height: 130px; }
+        .trunk-level-5 { width: 30px; height: 150px; }
+        .trunk-level-6 { width: 32px; height: 160px; }
         
-        .trunk-level-2 {
-            width: 25px;
-            height: 120px;
-        }
-        
-        .trunk-level-3 {
-            width: 30px;
-            height: 200px; /* 幹を伸ばして葉と重なるように */
-        }
-        
-        .trunk-level-4 {
-            width: 32px;
-            height: 200px;
-        }
-        
-        .trunk-level-5 {
-            width: 35px;
-            height: 230px;
-        }
-        
-        .trunk-level-6 {
-            width: 35px;
-            height: 250px;
-        }
-        
-        /* レベル3以上: 葉 */
+        /* レベル3以上: 葉 - 緊急修正版 */
         .tree-foliage {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            transition: all 2s ease-in-out;
-            opacity: 0;
+            transition: all 1s ease-in-out;
+            opacity: 1; /* 強制表示 */
+            z-index: 22;
         }
         
         .foliage-layer {
@@ -181,121 +183,118 @@
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(to bottom, #228B22 0%, #32CD32 50%, #228B22 100%);
-            filter: blur(0.8px);
-            opacity: 0.9;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            transition: all 1s ease-in-out;
+            opacity: 0.95;
+            clip-path: polygon(50% 0%, 15% 85%, 85% 85%);
+            transition: all 0.5s ease-in-out;
         }
         
-        /* レベル3: 幹の上に最小の葉1層 */
+        /* レベル別設定 - 緊急修正版 */
         .foliage-level-3 {
             bottom: 120px;
-            width: 300px;
-            height: 300px;
+            width: 200px;
+            height: 200px;
         }
         
         .foliage-level-3 .top-layer {
-            width: 150px;
-            height: 75px;
-            top: 150px; /* 幹の上部に配置 */
+            width: 100px;
+            height: 50px;
+            top: 100px;
         }
         
-        /* レベル4: 最小の葉 + その下に2番目の層 */
         .foliage-level-4 {
             bottom: 120px;
-            width: 300px;
-            height: 300px;
+            width: 220px;
+            height: 220px;
         }
         
         .foliage-level-4 .top-layer {
-            width: 150px;
-            height: 75px;
-            top: 100px;
+            width: 100px;
+            height: 50px;
+            top: 70px;
         }
         
         .foliage-level-4 .second-layer {
-            width: 200px;
-            height: 100px;
-            top: 150px;
-        }
-        
-        /* レベル5: 上3層（1番目+2番目+3番目） */
-        .foliage-level-5 {
-            bottom: 120px;
-            width: 300px;
-            height: 300px;
-        }
-        
-        .foliage-level-5 .top-layer {
-            width: 150px;
-            height: 75px;
-            top: 50px;
-        }
-        
-        .foliage-level-5 .second-layer {
-            width: 200px;
-            height: 100px;
+            width: 140px;
+            height: 70px;
             top: 100px;
         }
         
-        .foliage-level-5 .third-layer {
-            width: 250px;
-            height: 125px;
-            top: 175px;
+        .foliage-level-5 {
+            bottom: 120px;
+            width: 240px;
+            height: 240px;
         }
         
-        /* レベル6: 全4層（完全な木） */
+        .foliage-level-5 .top-layer {
+            width: 100px;
+            height: 50px;
+            top: 40px;
+        }
+        
+        .foliage-level-5 .second-layer {
+            width: 140px;
+            height: 70px;
+            top: 70px;
+        }
+        
+        .foliage-level-5 .third-layer {
+            width: 180px;
+            height: 90px;
+            top: 110px;
+        }
+        
         .foliage-level-6 {
             bottom: 120px;
-            width: 300px;
-            height: 300px;
+            width: 260px;
+            height: 260px;
         }
         
         .foliage-level-6 .top-layer {
-            width: 150px;
-            height: 75px;
-            top: 0px;
+            width: 100px;
+            height: 50px;
+            top: 20px;
         }
         
         .foliage-level-6 .second-layer {
-            width: 200px;
-            height: 100px;
+            width: 140px;
+            height: 70px;
             top: 50px;
         }
         
         .foliage-level-6 .third-layer {
-            width: 250px;
-            height: 125px;
-            top: 125px;
+            width: 180px;
+            height: 90px;
+            top: 90px;
         }
         
         .foliage-level-6 .bottom-layer {
-            width: 300px;
-            height: 150px;
-            top: 225px;
+            width: 220px;
+            height: 110px;
+            top: 140px;
         }
         
-        /* 果実 */
+        /* 果実 - 緊急修正版 */
         .fruit {
             position: absolute;
-            width: 22px;
-            height: 22px;
+            width: 14px;
+            height: 14px;
             opacity: 1;
             transform: scale(1);
-            transition: all 0.5s ease-out;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease-out;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
             animation: glow 2s ease-in-out infinite alternate;
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             cursor: pointer;
+            z-index: 23;
         }
         
-        .fruit:hover {
-            transform: scale(1.2);
+        .fruit:active {
+            transform: scale(1.4);
         }
         
         @keyframes glow {
-            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
-            100% { box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px currentColor; }
+            0% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.8); }
+            100% { box-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 20px currentColor; }
         }
         
         .fruit-thanks { background: radial-gradient(circle, #FF69B4 0%, #FF1493 100%); }
@@ -306,237 +305,233 @@
         
         /* 成長アニメーション */
         .growth-animation {
-            animation: growthPulse 1s ease-out;
+            animation: growthPulse 0.8s ease-out;
         }
         
         @keyframes growthPulse {
-            0% { transform: translateX(-50%) scale(0.8); opacity: 0.5; }
-            50% { transform: translateX(-50%) scale(1.1); opacity: 0.8; }
+            0% { transform: translateX(-50%) scale(0.9); opacity: 0.6; }
+            50% { transform: translateX(-50%) scale(1.1); opacity: 0.9; }
             100% { transform: translateX(-50%) scale(1); opacity: 1; }
         }
         
-        .light-particles {
-            position: absolute;
-            top: 0;
+        /* 下部UI統合エリア */
+        .bottom-ui {
+            position: fixed;
+            bottom: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 -3px 20px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px 12px 12px;
         }
         
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: radial-gradient(circle, #FFD700 0%, transparent 100%);
-            border-radius: 50%;
-            animation: particleFloat 3s ease-out forwards;
-        }
-        
-        @keyframes particleFloat {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(-100px) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-200px) scale(0);
-            }
-        }
-        
-        .sunlight {
-            position: absolute;
-            top: 10%;
-            left: 30%;
-            width: 200px;
-            height: 300px;
-            background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
-            opacity: 0;
-            transform: rotate(15deg);
-            transition: opacity 1s ease-in-out;
-        }
-        
+        /* 統計パネル（コンパクト版） */
         .status-panel {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            max-width: min(600px, calc(100vw - 40px));
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .info-section {
-            padding: 10px 15px;
-            margin-bottom: 0;
-        }
-        
-        .stats {
-            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
         
         .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 6px;
         }
         
         .panel-title {
             color: #2F4F4F;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
         }
         
         .status-badge {
-            background: rgba(76, 175, 80, 0.2);
+            background: rgba(76, 175, 80, 0.15);
             color: #4CAF50;
             border: 1px solid #4CAF50;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 500;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
         }
         
         .stat-item {
-            margin-bottom: 6px;
-            font-size: 12px;
+            text-align: center;
+            font-size: 10px;
             color: #2F4F4F;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
         .stat-value {
-            font-weight: 500;
+            font-weight: 700;
             color: #228B22;
+            font-size: 14px;
+            display: block;
         }
         
-        .response-log {
-            max-height: 40px;
-            overflow-y: auto;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 6px;
+        .stat-label {
             font-size: 9px;
-            margin-top: 6px;
+            margin-top: 1px;
         }
         
-        .log-entry {
-            margin-bottom: 4px;
-            padding: 2px 0;
-            border-bottom: 1px solid #e0e0e0;
-            word-break: break-word;
-        }
-        
-        .log-timestamp {
+        .category-line {
+            font-size: 9px;
             color: #666;
-            font-weight: 500;
+            text-align: center;
+            margin-bottom: 4px;
+            line-height: 1.2;
         }
         
-        .log-action {
-            color: #2196F3;
-            margin-left: 5px;
+        .recent-updates {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 6px;
+            padding: 4px 6px;
+            margin-bottom: 4px;
         }
         
-        .log-growth {
-            color: #4CAF50;
-            margin-left: 5px;
+        .recent-title {
+            font-size: 8px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 2px;
         }
         
-        .log-fruit {
-            color: #FF9800;
-            margin-left: 5px;
+        .update-entry {
+            font-size: 8px;
+            color: #333;
+            margin-bottom: 1px;
+            line-height: 1.1;
         }
         
+        .update-entry:last-child {
+            margin-bottom: 0;
+        }
+        
+        .last-update {
+            font-size: 7px;
+            color: #999;
+            text-align: center;
+        }
+        
+        /* ボタンエリア */
         .controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 100;
+            gap: 6px;
+            justify-content: space-between;
         }
         
         .btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 10px 12px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 11px;
+            font-weight: 500;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            flex: 1;
+            white-space: nowrap;
+            touch-action: manipulation;
         }
         
-        .btn:hover, .btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        .btn:active {
+            transform: scale(0.95);
+            background: rgba(240, 240, 240, 0.95);
+        }
+        
+        .btn:disabled {
+            background: rgba(200, 200, 200, 0.8);
+            cursor: not-allowed;
+            transform: none;
         }
         
         .btn-form {
             background: linear-gradient(45deg, #4285f4, #34a853);
+            color: white;
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        .btn-refresh {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            border-color: rgba(255,255,255,0.4);
         }
         
         .btn-night {
             background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            border-color: rgba(255,255,255,0.4);
         }
         
         .btn-day {
             background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        /* ローディング状態 */
+        .loading {
+            position: relative;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
         /* モバイル対応 */
-        @media (max-width: 768px) {
-            .status-panel {
-                bottom: 10px;
-                left: 10px;
-                right: 10px;
-                max-width: none;
-                transform: none;
-            }
-            
+        @media (max-width: 480px) {
             .tree-container {
-                width: 90vw;
-                height: 45vh;
-                bottom: 30%;
+                width: 280px;
+                height: 280px;
+                bottom: 32%;
             }
             
-            .controls {
-                top: 10px;
-                right: 10px;
-                gap: 5px;
+            .bottom-ui {
+                padding: 6px 10px 10px 10px;
             }
             
             .btn {
-                padding: 8px 12px;
-                font-size: 11px;
-            }
-            
-            .fruit {
-                width: 18px;
-                height: 18px;
+                padding: 9px 10px;
+                font-size: 10px;
             }
         }
         
-        /* アクセシビリティ */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+        @media (max-width: 768px) and (orientation: landscape) {
+            .tree-container {
+                width: 250px;
+                height: 250px;
+                bottom: 25%;
             }
         }
     </style>
@@ -545,8 +540,12 @@
     <div class="canvas-container">
         <div class="sky"></div>
         <div class="clouds"></div>
-        <div class="sunlight" id="sunlight"></div>
         <div class="ground"></div>
+        
+        <!-- デバッグ情報 -->
+        <div class="debug-tree" id="debugTree">
+            木のデバッグ: 読み込み中...
+        </div>
         
         <div class="tree-container" id="treeContainer">
             <!-- レベル0: 苗 -->
@@ -559,77 +558,85 @@
             
             <!-- レベル3以上: 葉 -->
             <div class="tree-foliage" id="foliage"></div>
-            
-            <div class="light-particles" id="lightParticles"></div>
         </div>
         
-        <div class="status-panel">
-            <div class="panel-header">
-                <span class="panel-title">🌳 成長する木 - 本格運用版</span>
-                <span class="status-badge" id="levelBadge">レベル6</span>
-            </div>
-            
-            <div class="stats">
-                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 8px;">
-                    <div class="stat-item" style="margin-bottom: 0; min-width: 100px;">
-                        <span>🌱 レベル:</span>
-                        <span class="stat-value" id="level">6</span>
+        <!-- 下部統合UI -->
+        <div class="bottom-ui">
+            <!-- 統計パネル -->
+            <div class="status-panel">
+                <div class="panel-header">
+                    <span class="panel-title">🌳 成長する木</span>
+                    <span class="status-badge" id="levelBadge">読み込み中...</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="level">-</span>
+                        <span class="stat-label">🌱 レベル</span>
                     </div>
-                    <div class="stat-item" style="margin-bottom: 0; min-width: 100px;">
-                        <span>⭐ 果実:</span>
-                        <span class="stat-value" id="fruits">15</span>
+                    <div class="stat-item">
+                        <span class="stat-value" id="fruits">-</span>
+                        <span class="stat-label">⭐ 果実</span>
                     </div>
-                    <div class="stat-item" style="margin-bottom: 0; min-width: 120px;">
-                        <span>💎 ポイント:</span>
-                        <span class="stat-value" id="totalPoints">185</span>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalPoints">-</span>
+                        <span class="stat-label">💎 ポイント</span>
                     </div>
-                    <div class="stat-item" style="margin-bottom: 0; min-width: 100px;">
-                        <span>📝 投稿:</span>
-                        <span class="stat-value" id="responseCount">42</span>
+                    <div class="stat-item">
+                        <span class="stat-value" id="responseCount">-</span>
+                        <span class="stat-label">📝 投稿</span>
                     </div>
                 </div>
                 
-                <div class="response-log" id="responseLog" style="margin-top: 5px;">
-                    <div class="log-entry">
-                        <span class="log-timestamp">システム:</span>
-                        <span class="log-action">レベル別成長版が起動しました</span>
+                <div class="category-line" id="categoryBreakdown">
+                    データ読み込み中...
+                </div>
+                
+                <div class="recent-updates">
+                    <div class="recent-title">📋 最新の更新</div>
+                    <div id="recentUpdatesList">
+                        <div class="update-entry">システム起動中...</div>
                     </div>
                 </div>
                 
-                <div style="font-size: 9px; margin-top: 5px; color: #666; text-align: center;">
-                    <span id="categoryBreakdown">
-                        🩷 感謝: 3 | 🟣 敬意: 4 | 🟡 称賛: 2 | 🩵 自己申告: 5 | 🔴 その他: 1
-                    </span>
+                <div class="last-update" id="lastUpdate">
+                    最終更新: 未更新
                 </div>
             </div>
-        </div>
-        
-        <div class="controls">
-            <button class="btn btn-form" onclick="openGoogleForm()" title="Googleフォームで投稿する">
-                📝 投稿フォーム
-            </button>
-            <button class="btn btn-night" id="skyButton" onclick="toggleSkyMode()" title="空のモードを切り替え">
-                🌙 夜空
-            </button>
+            
+            <!-- ボタンエリア -->
+            <div class="controls">
+                <button class="btn btn-form" onclick="openGoogleForm()" title="Googleフォームで投稿する">
+                    📝 投稿
+                </button>
+                <button class="btn btn-refresh" id="refreshButton" onclick="refreshData()" title="データを最新に更新">
+                    🔄 更新
+                </button>
+                <button class="btn btn-night" id="skyButton" onclick="toggleSkyMode()" title="空のモードを切り替え">
+                    🌙 夜空
+                </button>
+                <button class="btn" onclick="forceShowTree()" title="木を強制表示">
+                    🌳 木表示
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        // 木の状態管理
-        let treeLevel = 6;
-        let fruitCount = 15;
-        let totalPoints = 185;
-        let responseCount = 42;
-        let isNightMode = false;
+        // スプレッドシートID
+        const SPREADSHEET_ID = '1zqG9R_fXhRMUzPdT3FktCQWBwgx1WToO0ilgEQ4WepQ';
         
-        // カテゴリ別の果実数
-        let categoryFruits = {
-            thanks: 3,
-            respect: 4,
-            praise: 2,
-            challenge: 5,
-            other: 1
-        };
+        // CSVエンドポイント（キャッシュバスターつき）
+        let CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=0`;
+        
+        // アプリの状態管理
+        let currentTreeData = null;
+        let isNightMode = false;
+        let autoRefreshInterval = null;
+        let isLoading = false;
+        let recentUpdates = [];
+        let lastDataHash = '';
+        let refreshCount = 0;
         
         const fruitColors = {
             'thanks': 'fruit-thanks',
@@ -666,28 +673,321 @@
             5: '葉3層',
             6: '完全な木'
         };
-        
-        // レベル判定
-        function calculateLevel(points) {
-            if (points < 30) return 0;
-            if (points < 60) return 1;
-            if (points < 90) return 2;
-            if (points < 120) return 3;
-            if (points < 150) return 4;
-            if (points < 180) return 5;
-            return 6;
+
+        // デバッグ情報更新
+        function updateDebugInfo(message) {
+            const debugEl = document.getElementById('debugTree');
+            if (debugEl) {
+                debugEl.textContent = `木のデバッグ: ${message}`;
+            }
+            console.log('🌳 木のデバッグ:', message);
+        }
+
+        // 木を強制表示する関数
+        function forceShowTree() {
+            updateDebugInfo('強制表示実行中...');
+            
+            // まずレベル4の木を強制表示
+            updateTreeAppearance(4, true);
+            
+            // テスト用の果実を追加
+            setTimeout(() => {
+                const testFruits = { thanks: 3, respect: 4, praise: 2, challenge: 38, other: 0 };
+                placeFruits(testFruits, 4);
+            }, 1000);
+            
+            updateDebugInfo('強制表示完了 - レベル4');
+            addRecentUpdate('木を強制表示しました');
+        }
+
+        // 星の種類判定
+        function determineStarType(category, message) {
+            if (!category && !message) return 'other';
+            
+            const text = (category + ' ' + message).toLowerCase();
+            
+            if (text.includes('感謝') || text.includes('thanks') || text.includes('ありがと')) {
+                return 'thanks';
+            }
+            if (text.includes('敬意') || text.includes('respect') || text.includes('尊敬') || text.includes('すごい')) {
+                return 'respect';
+            }
+            if (text.includes('称賛') || text.includes('praise') || text.includes('最高') || text.includes('excellent')) {
+                return 'praise';
+            }
+            if (text.includes('自己申告') || text.includes('challenge') || text.includes('挑戦') || text.includes('頑張') || text.includes('できた')) {
+                return 'challenge';
+            }
+            
+            return 'other';
+        }
+
+        // データ取得とパース
+        async function fetchData() {
+            try {
+                refreshCount++;
+                addRecentUpdate('データ取得中...');
+                updateDebugInfo('CSV取得開始');
+                
+                // キャッシュバスター追加
+                const timestamp = new Date().getTime();
+                const fetchUrl = `${CSV_URL}&cacheBuster=${timestamp}`;
+                
+                console.log('データ取得URL:', fetchUrl);
+                
+                const response = await fetch(fetchUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                console.log('CSV取得成功:', csvText.length, '文字');
+                updateDebugInfo(`CSV取得成功: ${csvText.length}文字`);
+                
+                // データのハッシュ値チェック（変更検出用）
+                const dataHash = btoa(csvText).slice(0, 20);
+                
+                if (dataHash === lastDataHash && currentTreeData && refreshCount > 1) {
+                    addRecentUpdate('データは最新');
+                    updateDebugInfo('データ変更なし');
+                    return currentTreeData;
+                }
+                lastDataHash = dataHash;
+                
+                // CSV解析
+                const lines = csvText.trim().split('\n');
+                console.log('CSV行数:', lines.length);
+                updateDebugInfo(`CSV解析: ${lines.length}行`);
+                
+                const data = [];
+                
+                for (let i = 1; i < lines.length; i++) { // ヘッダー行をスキップ
+                    const line = lines[i];
+                    if (!line.trim()) continue;
+                    
+                    // CSV行を解析（カンマで分割、但し引用符内は除外）
+                    const values = parseCSVLine(line);
+                    
+                    if (values.length >= 6) {
+                        const entry = {
+                            timestamp: values[0],
+                            author: values[1],
+                            recipient: values[2],
+                            category: values[3],
+                            points: parseInt(values[4]) || 0,
+                            message: values[5],
+                            starType: determineStarType(values[3], values[5]),
+                            // Apps Scriptで処理済みの場合はそれを優先
+                            processedStarType: values[7] || null,
+                            processedTotalPoints: parseInt(values[8]) || null,
+                            processedTreeLevel: parseInt(values[9]) || null
+                        };
+                        data.push(entry);
+                    }
+                }
+                
+                console.log('解析データ件数:', data.length);
+                updateDebugInfo(`データ解析完了: ${data.length}件`);
+                
+                // 統計計算
+                const totalPoints = data.reduce((sum, entry) => sum + entry.points, 0);
+                let treeLevel = 0;
+                if (totalPoints >= 180) treeLevel = 6;
+                else if (totalPoints >= 150) treeLevel = 5;
+                else if (totalPoints >= 120) treeLevel = 4;
+                else if (totalPoints >= 90) treeLevel = 3;
+                else if (totalPoints >= 60) treeLevel = 2;
+                else if (totalPoints >= 30) treeLevel = 1;
+
+                // Apps Scriptで処理済みの最新データがあれば優先
+                const latestEntry = data[data.length - 1];
+                if (latestEntry && latestEntry.processedTotalPoints !== null && latestEntry.processedTreeLevel !== null) {
+                    const processedData = {
+                        totalPoints: latestEntry.processedTotalPoints,
+                        treeLevel: latestEntry.processedTreeLevel,
+                        responseCount: data.length,
+                        rawData: data
+                    };
+                    currentTreeData = processedData;
+                    updateDebugInfo(`処理済みデータ使用: Lv.${processedData.treeLevel}, ${processedData.totalPoints}pt`);
+                    addRecentUpdate(`処理済み: ${processedData.totalPoints}pt, Lv.${processedData.treeLevel}`);
+                } else {
+                    const calculatedData = {
+                        totalPoints: totalPoints,
+                        treeLevel: treeLevel,
+                        responseCount: data.length,
+                        rawData: data
+                    };
+                    currentTreeData = calculatedData;
+                    updateDebugInfo(`計算データ使用: Lv.${calculatedData.treeLevel}, ${calculatedData.totalPoints}pt`);
+                    addRecentUpdate(`計算結果: ${calculatedData.totalPoints}pt, Lv.${calculatedData.treeLevel}`);
+                }
+                
+                return currentTreeData;
+                
+            } catch (error) {
+                console.error('データ取得エラー:', error);
+                updateDebugInfo(`エラー: ${error.message}`);
+                addRecentUpdate(`エラー: ${error.message}`);
+                return currentTreeData; // 既存データを返す
+            }
+        }
+
+        // CSV行解析（引用符対応）
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current.trim());
+            return result;
         }
         
-        // 木の外観更新
+        // データ更新関数
+        async function refreshData() {
+            if (isLoading) return;
+            
+            const refreshButton = document.getElementById('refreshButton');
+            isLoading = true;
+            refreshButton.classList.add('loading');
+            refreshButton.disabled = true;
+            
+            try {
+                const data = await fetchData();
+                if (data) {
+                    updateAllUI(data);
+                    
+                    // 最終更新時間を記録
+                    const updateTime = new Date().toLocaleTimeString('ja-JP', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    document.getElementById('lastUpdate').textContent = `最終更新: ${updateTime}`;
+                }
+            } catch (error) {
+                console.error('データ更新エラー:', error);
+                addRecentUpdate(`更新エラー: ${error.message}`);
+                updateDebugInfo(`更新エラー: ${error.message}`);
+            } finally {
+                // ローディング状態を解除
+                isLoading = false;
+                refreshButton.classList.remove('loading');
+                refreshButton.disabled = false;
+            }
+        }
+        
+        // 全UIを更新
+        function updateAllUI(data) {
+            const { totalPoints, treeLevel, responseCount, rawData } = data;
+            
+            updateDebugInfo(`UI更新開始: Lv.${treeLevel}, ${totalPoints}pt`);
+            
+            // 基本統計の更新
+            document.getElementById('level').textContent = treeLevel;
+            document.getElementById('totalPoints').textContent = totalPoints;
+            document.getElementById('responseCount').textContent = responseCount;
+            
+            // カテゴリ別の果実数をカウント
+            const categoryFruits = { thanks: 0, respect: 0, praise: 0, challenge: 0, other: 0 };
+            rawData.forEach(entry => {
+                const starType = entry.processedStarType || entry.starType;
+                categoryFruits[starType]++;
+            });
+
+            // 果実の総数を計算
+            const fruitCount = Object.values(categoryFruits).reduce((sum, count) => sum + count, 0);
+            document.getElementById('fruits').textContent = fruitCount;
+            
+            // レベルバッジの更新
+            const levelBadge = document.getElementById('levelBadge');
+            levelBadge.textContent = `${levelEmojis[treeLevel]} ${levelNames[treeLevel]}`;
+            
+            // カテゴリ別の表示を更新
+            updateCategoryBreakdown(categoryFruits);
+            
+            // 木の外観を更新
+            updateTreeAppearance(treeLevel, true);
+            
+            // 果実を配置
+            setTimeout(() => {
+                placeFruits(categoryFruits, treeLevel);
+            }, 800);
+
+            addRecentUpdate(`更新完了: ${fruitCount}個の果実`);
+            updateDebugInfo(`UI更新完了: ${fruitCount}個の果実表示`);
+        }
+        
+        // カテゴリ別の表示を更新
+        function updateCategoryBreakdown(categoryFruits) {
+            const breakdown = Object.entries(categoryFruits)
+                .map(([key, count]) => {
+                    const emoji = key === 'thanks' ? '🩷' : 
+                                 key === 'respect' ? '🟣' : 
+                                 key === 'praise' ? '🟡' : 
+                                 key === 'challenge' ? '🩵' : '🔴';
+                    return `${emoji}${count}`;
+                })
+                .join(' ');
+            document.getElementById('categoryBreakdown').textContent = breakdown;
+        }
+        
+        // 最近の更新を追加（最大2件）
+        function addRecentUpdate(message) {
+            const time = new Date().toLocaleTimeString('ja-JP', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+            
+            recentUpdates.unshift(`${time}: ${message}`);
+            if (recentUpdates.length > 2) {
+                recentUpdates = recentUpdates.slice(0, 2);
+            }
+            
+            const listElement = document.getElementById('recentUpdatesList');
+            listElement.innerHTML = recentUpdates
+                .map(update => `<div class="update-entry">${update}</div>`)
+                .join('');
+        }
+        
+        // 木の外観更新 - 緊急修正版
         function updateTreeAppearance(level, animated = true) {
+            updateDebugInfo(`木の外観更新開始: レベル${level}`);
+            
             const seedling = document.getElementById('seedling');
             const trunk = document.getElementById('trunk');
             const foliage = document.getElementById('foliage');
+            
+            if (!seedling || !trunk || !foliage) {
+                updateDebugInfo('エラー: 木の要素が見つかりません');
+                return;
+            }
             
             // 全て非表示にしてからレベルに応じて表示
             seedling.style.opacity = '0';
             trunk.style.opacity = '0';
             foliage.style.opacity = '0';
+            foliage.innerHTML = '';
             
             // アニメーションクラスを追加
             if (animated) {
@@ -695,7 +995,7 @@
                 treeContainer.classList.add('growth-animation');
                 setTimeout(() => {
                     treeContainer.classList.remove('growth-animation');
-                }, 1000);
+                }, 800);
             }
             
             setTimeout(() => {
@@ -703,209 +1003,155 @@
                     // レベル0: 苗
                     seedling.style.opacity = '1';
                     trunk.className = 'tree-trunk';
-                    foliage.innerHTML = '';
+                    updateDebugInfo('レベル0: 苗を表示');
                 } else if (level >= 1) {
                     // レベル1以上: 幹
                     trunk.className = `tree-trunk trunk-level-${level}`;
                     trunk.style.opacity = '1';
+                    updateDebugInfo(`レベル${level}: 幹を表示`);
                     
                     if (level >= 3) {
-                        // レベル3以上: 葉（下から上へと層を追加）
-                        foliage.className = `tree-foliage foliage-level-${level}`;
-                        foliage.innerHTML = '';
-                        
-                        // レベルに応じて自然な層の組み合わせを追加
-                        if (level === 3) {
-                            // レベル3: 幹の上に最小の葉1層
-                            const topLayer = document.createElement('div');
-                            topLayer.className = 'foliage-layer top-layer';
-                            foliage.appendChild(topLayer);
-                        } else if (level === 4) {
-                            // レベル4: 最小の葉 + その下に2番目の層
-                            const topLayer = document.createElement('div');
-                            topLayer.className = 'foliage-layer top-layer';
-                            foliage.appendChild(topLayer);
-                            
-                            const secondLayer = document.createElement('div');
-                            secondLayer.className = 'foliage-layer second-layer';
-                            foliage.appendChild(secondLayer);
-                        } else if (level === 5) {
-                            // レベル5: 上3層
-                            const topLayer = document.createElement('div');
-                            topLayer.className = 'foliage-layer top-layer';
-                            foliage.appendChild(topLayer);
-                            
-                            const secondLayer = document.createElement('div');
-                            secondLayer.className = 'foliage-layer second-layer';
-                            foliage.appendChild(secondLayer);
-                            
-                            const thirdLayer = document.createElement('div');
-                            thirdLayer.className = 'foliage-layer third-layer';
-                            foliage.appendChild(thirdLayer);
-                        } else if (level === 6) {
-                            // レベル6: 全4層（完全な木）
-                            const topLayer = document.createElement('div');
-                            topLayer.className = 'foliage-layer top-layer';
-                            foliage.appendChild(topLayer);
-                            
-                            const secondLayer = document.createElement('div');
-                            secondLayer.className = 'foliage-layer second-layer';
-                            foliage.appendChild(secondLayer);
-                            
-                            const thirdLayer = document.createElement('div');
-                            thirdLayer.className = 'foliage-layer third-layer';
-                            foliage.appendChild(thirdLayer);
-                            
-                            const bottomLayer = document.createElement('div');
-                            bottomLayer.className = 'foliage-layer bottom-layer';
-                            foliage.appendChild(bottomLayer);
-                        }
-                        
+                        // レベル3以上: 葉
+                        createFoliageLayers(level);
                         setTimeout(() => {
                             foliage.style.opacity = '1';
-                        }, 500);
+                            updateDebugInfo(`レベル${level}: 葉を表示`);
+                        }, 400);
                     }
                 }
-            }, animated ? 200 : 0);
+            }, animated ? 150 : 0);
+        }
+        
+        // 葉の層を作成
+        function createFoliageLayers(level) {
+            const foliage = document.getElementById('foliage');
+            foliage.className = `tree-foliage foliage-level-${level}`;
+            foliage.innerHTML = '';
+            
+            updateDebugInfo(`葉の層作成: レベル${level}`);
+            
+            if (level === 3) {
+                const topLayer = document.createElement('div');
+                topLayer.className = 'foliage-layer top-layer';
+                foliage.appendChild(topLayer);
+            } else if (level === 4) {
+                const topLayer = document.createElement('div');
+                topLayer.className = 'foliage-layer top-layer';
+                foliage.appendChild(topLayer);
+                
+                const secondLayer = document.createElement('div');
+                secondLayer.className = 'foliage-layer second-layer';
+                foliage.appendChild(secondLayer);
+            } else if (level === 5) {
+                const topLayer = document.createElement('div');
+                topLayer.className = 'foliage-layer top-layer';
+                foliage.appendChild(topLayer);
+                
+                const secondLayer = document.createElement('div');
+                secondLayer.className = 'foliage-layer second-layer';
+                foliage.appendChild(secondLayer);
+                
+                const thirdLayer = document.createElement('div');
+                thirdLayer.className = 'foliage-layer third-layer';
+                foliage.appendChild(thirdLayer);
+            } else if (level === 6) {
+                const topLayer = document.createElement('div');
+                topLayer.className = 'foliage-layer top-layer';
+                foliage.appendChild(topLayer);
+                
+                const secondLayer = document.createElement('div');
+                secondLayer.className = 'foliage-layer second-layer';
+                foliage.appendChild(secondLayer);
+                
+                const thirdLayer = document.createElement('div');
+                thirdLayer.className = 'foliage-layer third-layer';
+                foliage.appendChild(thirdLayer);
+                
+                const bottomLayer = document.createElement('div');
+                bottomLayer.className = 'foliage-layer bottom-layer';
+                foliage.appendChild(bottomLayer);
+            }
+        }
+        
+        // 果実を配置
+        function placeFruits(categoryFruits, treeLevel) {
+            const foliage = document.getElementById('foliage');
+            if (!foliage || treeLevel < 3) {
+                updateDebugInfo(`果実配置スキップ: レベル${treeLevel}`);
+                return;
+            }
+            
+            updateDebugInfo(`果実配置開始: レベル${treeLevel}`);
+            
+            // 既存の果実を削除
+            const existingFruits = foliage.querySelectorAll('.fruit');
+            existingFruits.forEach(fruit => fruit.remove());
+            
+            // カテゴリ別に果実を配置
+            Object.entries(categoryFruits).forEach(([category, count]) => {
+                const displayCount = Math.min(count, 10); // 最大10個まで表示
+                for (let i = 0; i < displayCount; i++) {
+                    setTimeout(() => {
+                        addCategoryFruit(category, treeLevel);
+                    }, i * 50);
+                }
+            });
+            
+            updateDebugInfo(`果実配置完了: 総数${Object.values(categoryFruits).reduce((a,b)=>a+b,0)}`);
         }
         
         // 果実追加
-        function addCategoryFruit(category, animated = true) {
+        function addCategoryFruit(category, treeLevel) {
             const foliage = document.getElementById('foliage');
-            if (!foliage || foliage.style.opacity === '0') return;
+            if (!foliage) return;
             
             const fruit = document.createElement('div');
             fruit.className = `fruit ${fruitColors[category]}`;
             fruit.setAttribute('data-category', category);
             fruit.setAttribute('data-category-name', categoryNames[category]);
             
-            // 果実の位置をランダムに設定（現在のレベルの葉の範囲内）
-            const treeLevel = calculateLevel(totalPoints);
-            let maxWidth, maxHeight, offsetY;
+            // 果実の位置をランダムに設定
+            const { maxWidth, maxHeight, offsetY } = getFruitPositionLimits(treeLevel);
             
-            if (treeLevel === 3) {
-                // レベル3: 幹と重なる小さな葉1層のみ
-                maxWidth = 150;
-                maxHeight = 75;
-                offsetY = 265; /* 幹と重なる位置に合わせて調整 */
-            } else if (treeLevel === 4) {
-                // レベル4: 上2層
-                maxWidth = 200;
-                maxHeight = 175; // 2層分の高さ
-                offsetY = 100;
-            } else if (treeLevel === 5) {
-                // レベル5: 上3層
-                maxWidth = 250;
-                maxHeight = 250; // 3層分の高さ
-                offsetY = 50;
-            } else {
-                // レベル6: 全4層（完全な木）
-                maxWidth = 300;
-                maxHeight = 300; // 4層分の高さ
-                offsetY = 0;
-            }
-            
-            const x = Math.random() * maxWidth - maxWidth/2;
-            const y = Math.random() * maxHeight + offsetY + 20;
+            const x = (Math.random() - 0.5) * maxWidth * 0.9;
+            const y = Math.random() * maxHeight * 0.9 + offsetY + 20;
             
             fruit.style.left = `calc(50% + ${x}px)`;
             fruit.style.top = `${y}px`;
-            
-            if (animated) {
-                fruit.style.transform = 'scale(0)';
-                fruit.style.opacity = '0';
-            }
+            fruit.style.transform = 'scale(0)';
+            fruit.style.opacity = '0';
             
             foliage.appendChild(fruit);
             
-            if (animated) {
+            setTimeout(() => {
+                fruit.style.transform = 'scale(1)';
+                fruit.style.opacity = '1';
+            }, 100);
+            
+            // タップイベント
+            fruit.addEventListener('click', function(e) {
+                e.preventDefault();
+                const categoryName = fruit.getAttribute('data-category-name');
+                addRecentUpdate(`${categoryName}をタップ`);
+                
+                // タップエフェクト
+                fruit.style.transform = 'scale(1.4)';
                 setTimeout(() => {
                     fruit.style.transform = 'scale(1)';
-                    fruit.style.opacity = '1';
-                }, 100);
-            }
-            
-            // クリックイベント
-            fruit.addEventListener('click', function() {
-                createParticleEffect(fruit);
-                const categoryName = fruit.getAttribute('data-category-name');
-                addResponseLog(new Date().toLocaleTimeString(), `${categoryName}の実をクリック`);
+                }, 200);
             });
         }
         
-        // パーティクルエフェクト
-        function createParticleEffect(element) {
-            const rect = element.getBoundingClientRect();
-            const particles = document.getElementById('lightParticles');
-            
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = (rect.left + rect.width/2) + 'px';
-                particle.style.top = (rect.top + rect.height/2) + 'px';
-                particle.style.animationDelay = (i * 0.1) + 's';
-                
-                particles.appendChild(particle);
-                
-                setTimeout(() => {
-                    if (particles.contains(particle)) {
-                        particles.removeChild(particle);
-                    }
-                }, 3000);
-            }
-        }
-        
-        // 統計更新
-        function updateStats() {
-            treeLevel = calculateLevel(totalPoints);
-            
-            // 果実の総数を計算
-            fruitCount = Object.values(categoryFruits).reduce((sum, count) => sum + count, 0);
-            
-            document.getElementById('level').textContent = treeLevel;
-            document.getElementById('fruits').textContent = fruitCount;
-            document.getElementById('totalPoints').textContent = totalPoints;
-            document.getElementById('responseCount').textContent = responseCount;
-            
-            // レベルバッジ更新
-            const levelBadge = document.getElementById('levelBadge');
-            levelBadge.textContent = `${levelEmojis[treeLevel]} ${levelNames[treeLevel]}`;
-            
-            // カテゴリ別表示更新
-            const breakdown = Object.entries(categoryFruits)
-                .map(([key, count]) => {
-                    const emoji = key === 'thanks' ? '🩷' : 
-                                 key === 'respect' ? '🟣' : 
-                                 key === 'praise' ? '🟡' : 
-                                 key === 'challenge' ? '🩵' : '🔴';
-                    return `${emoji} ${categoryNames[key]}: ${count}`;
-                })
-                .join(' | ');
-            document.getElementById('categoryBreakdown').textContent = breakdown;
-        }
-        
-        // ログエントリ追加
-        function addResponseLog(timestamp, action, isGrowth = false) {
-            const log = document.getElementById('responseLog');
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            
-            const timeSpan = document.createElement('span');
-            timeSpan.className = 'log-timestamp';
-            timeSpan.textContent = timestamp + ':';
-            
-            const actionSpan = document.createElement('span');
-            actionSpan.className = isGrowth ? 'log-growth' : 'log-action';
-            actionSpan.textContent = action;
-            
-            entry.appendChild(timeSpan);
-            entry.appendChild(actionSpan);
-            
-            log.insertBefore(entry, log.firstChild);
-            
-            // 古いエントリを削除（最大10件）
-            while (log.children.length > 10) {
-                log.removeChild(log.lastChild);
+        // 果実の配置範囲を取得
+        function getFruitPositionLimits(treeLevel) {
+            if (treeLevel === 3) {
+                return { maxWidth: 100, maxHeight: 50, offsetY: 100 };
+            } else if (treeLevel === 4) {
+                return { maxWidth: 140, maxHeight: 120, offsetY: 70 };
+            } else if (treeLevel === 5) {
+                return { maxWidth: 180, maxHeight: 150, offsetY: 40 };
+            } else {
+                return { maxWidth: 220, maxHeight: 180, offsetY: 20 };
             }
         }
         
@@ -921,30 +1167,30 @@
                 button.innerHTML = '☀️ 昼空';
                 button.className = 'btn btn-day';
                 addStars();
-                addResponseLog('システム', '夜空モードに切り替えました');
+                addRecentUpdate('夜空モードに切り替え');
             } else {
                 sky.classList.remove('night');
                 button.innerHTML = '🌙 夜空';
                 button.className = 'btn btn-night';
                 removeStars();
-                addResponseLog('システム', '昼空モードに切り替えました');
+                addRecentUpdate('昼空モードに切り替え');
             }
         }
         
         // 星を追加
         function addStars() {
             const sky = document.querySelector('.sky');
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 20; i++) {
                 const star = document.createElement('div');
                 star.className = 'sky-star';
                 star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 80 + '%';
                 star.style.animationDelay = Math.random() * 2 + 's';
                 sky.appendChild(star);
                 
                 setTimeout(() => {
                     star.style.opacity = '1';
-                }, 100);
+                }, 50);
             }
         }
         
@@ -957,57 +1203,77 @@
                     if (star.parentNode) {
                         star.parentNode.removeChild(star);
                     }
-                }, 300);
+                }, 200);
             });
         }
         
         // Googleフォームを開く
         function openGoogleForm() {
-            addResponseLog('システム', 'Googleフォームを開きました');
+            addRecentUpdate('フォームを開きました');
             window.open('https://docs.google.com/forms/d/e/1FAIpQLSeRWrEhCU5BdZuoBceFvX19dX8lqQY9G_rFVx2WwkA49cHBGw/viewform', '_blank');
         }
         
-        // デバイス判定
-        function isMobileDevice() {
-            return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // 自動更新を開始
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            // 45秒ごとに自動更新
+            autoRefreshInterval = setInterval(() => {
+                if (!isLoading && !document.hidden) {
+                    refreshData();
+                }
+            }, 45000);
+            
+            addRecentUpdate('自動更新開始（45秒間隔）');
         }
         
         // 初期化
         function init() {
-            addResponseLog('システム', 'レベル別成長版を初期化中...');
+            updateDebugInfo('アプリ初期化開始');
+            addRecentUpdate('アプリ初期化中...');
             
-            // 現在のレベルに応じて木を表示
-            updateTreeAppearance(treeLevel, false);
-            
-            // 初期果実を配置
-            setTimeout(() => {
-                for (let category in categoryFruits) {
-                    for (let i = 0; i < categoryFruits[category]; i++) {
-                        setTimeout(() => {
-                            addCategoryFruit(category, false);
-                        }, i * 50);
-                    }
-                }
-            }, 1000);
-            
-            updateStats();
-            
-            // デバイス判定と最適化
-            const deviceType = isMobileDevice() ? 'スマートフォン' : 'PC';
-            addResponseLog('システム', `${deviceType}向けに最適化`);
-            
-            addResponseLog('システム', `レベル${treeLevel}の立派な木が表示されました`);
-            
-            // レベルアップのヒント
-            if (totalPoints < 180) {
-                const nextLevel = calculateLevel(totalPoints + 1);
-                const pointsNeeded = (nextLevel * 30) - totalPoints;
-                addResponseLog('システム', `次のレベルまであと${pointsNeeded}ポイント！`);
+            // まず木のコンテナが存在するか確認
+            const treeContainer = document.getElementById('treeContainer');
+            if (treeContainer) {
+                updateDebugInfo('木のコンテナ確認OK');
+            } else {
+                updateDebugInfo('エラー: 木のコンテナが見つかりません');
             }
+            
+            // 初回データ取得
+            refreshData();
+            
+            // 自動更新を開始
+            startAutoRefresh();
+            
+            // 5秒後に強制表示テスト
+            setTimeout(() => {
+                if (!currentTreeData) {
+                    updateDebugInfo('データ取得失敗 - 強制表示実行');
+                    forceShowTree();
+                }
+            }, 5000);
+            
+            addRecentUpdate('初期化完了');
+            updateDebugInfo('初期化完了');
         }
         
         // ページ読み込み完了時に初期化
         document.addEventListener('DOMContentLoaded', init);
+        
+        // ページが非表示になったら自動更新を停止
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    addRecentUpdate('自動更新を一時停止');
+                }
+            } else {
+                startAutoRefresh();
+            }
+        });
     </script>
 </body>
 </html>
