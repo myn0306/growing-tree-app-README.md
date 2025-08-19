@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌳 成長する木 - 本格運用版</title>
+    <title>🌳 成長する木 - 本格運用版 v2.0</title>
     <meta name="description" content="美しく成長する木のビジュアライゼーション - レベル別成長過程">
+    <meta name="cache-control" content="no-cache">
+    <meta name="pragma" content="no-cache">
+    <meta name="expires" content="0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌳</text></svg>">
     
     <style>
@@ -675,7 +678,7 @@
 
     <script>
         // 🚨 重要：木の更新用Apps ScriptのURL
-        const TREE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwG41uvtRLc_qevHR-6B4a94fKPNj9ZZOLNV7xU-KtyG6mnV2G7ivZoHlq-4UEFblGw/exec';
+        const TREE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxj4p9pUs0S60H8W-75XNS8VQBh1vNHGgg4A04cuEqV2e1i4f5Gbf6NCQQS0C8WRKMCPA/exec';
         
         // GoogleフォームのURL
         const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeRWrEhCU5BdZuoBceFvX19dX8lqQY9G_rFVx2WwkA49cHBGw/viewform';
@@ -1125,7 +1128,7 @@
         
         // 初期化
         function init() {
-            addRecentUpdate('アプリを初期化中...');
+            addRecentUpdate('🌳 アプリv2.0 初期化中...');
             
             // 木の更新用URLチェック
             if (TREE_SCRIPT_URL.includes('【ここに') || TREE_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
@@ -1141,6 +1144,7 @@
             
             console.log('✅ TREE_SCRIPT_URL設定済み:', TREE_SCRIPT_URL);
             addRecentUpdate('✅ URL設定確認完了');
+            addRecentUpdate('🔗 Apps Script接続準備完了');
             
             // 初回データ取得
             refreshData();
@@ -1148,7 +1152,7 @@
             // 自動更新を開始
             startAutoRefresh();
             
-            addRecentUpdate('初期化完了');
+            addRecentUpdate('🎉 v2.0初期化完了');
         }
         
         // ページ読み込み完了時に初期化
