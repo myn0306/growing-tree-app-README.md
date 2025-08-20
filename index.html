@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌳 成長する木 - v2.2 CORS対応版</title>
+    <title>🌳 成長する木 - v2.3 最適化版</title>
     <meta name="description" content="美しく成長する木のビジュアライゼーション">
     <meta name="cache-control" content="no-cache">
     <meta name="pragma" content="no-cache">
@@ -462,7 +462,7 @@
                 <div class="recent-updates">
                     <div class="recent-title">📋 最新の更新</div>
                     <div id="recentUpdatesList">
-                        <div class="update-entry">v2.2 CORS対応版 起動中...</div>
+                        <div class="update-entry">v2.3 最適化版 起動中...</div>
                     </div>
                 </div>
                 
@@ -480,8 +480,8 @@
     </div>
 
     <script>
-        // 🚨 最新のApps Script URL（カテゴリ対応版）
-        const TREE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0oVxf6ViO_VKLu9zVEC8PXfXJRzNikeUuJx3F5xp8jKiGg8fTnUpb8JpjXrFOMxrCog/exec';
+        // 🚀 最新の最適化 Apps Script URL（v2.3対応）
+        const TREE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUuhibsGsbyRbbnMWQZf3XHtmgFtwzqDEPwONWviUDcoBocPCchsG6S8XtKppOH7By/exec';
         
         // GoogleフォームのURL
         const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeRWrEhCU5BdZuoBceFvX19dX8lqQY9G_rFVx2WwkA49cHBGw/viewform';
@@ -519,131 +519,62 @@
         };
         
         /**
-         * 🌐 CORS問題解決版のデータ取得関数
+         * 🌐 最適化API対応版のデータ取得関数
          */
-        async function fetchTreeDataSmart() {
-            console.log('🌳 スマートデータ取得開始 (v2.2)');
+        async function fetchTreeDataOptimized() {
+            console.log('🚀 最適化API v2.3 データ取得開始');
             connectionAttempts++;
             
-            // 方法1: 直接fetch（最新ブラウザ対応）
             try {
-                console.log('🔄 方法1: 直接fetch');
                 const response = await fetch(TREE_SCRIPT_URL, {
                     method: 'GET',
                     cache: 'no-cache',
                     redirect: 'follow'
                 });
                 
-                console.log('📡 レスポンス:', response.status, response.statusText);
+                console.log('📡 最適化API レスポンス:', response.status, response.statusText);
                 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('✅ 直接fetch成功:', data);
-                    return data;
+                    console.log('✅ 最適化API 取得成功:', data);
+                    
+                    // 新しいAPI形式に対応してデータを変換
+                    const convertedData = convertOptimizedAPIData(data);
+                    return convertedData;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
             } catch (error) {
-                console.log('❌ 直接fetch失敗:', error.message);
+                console.error('❌ 最適化API 取得失敗:', error);
+                throw error;
             }
-            
-            // 方法2: JSONP方式
-            try {
-                console.log('🔄 方法2: JSONP');
-                const data = await fetchWithJSONP();
-                console.log('✅ JSONP成功:', data);
-                return data;
-            } catch (error) {
-                console.log('❌ JSONP失敗:', error.message);
-            }
-            
-            // 方法3: iframe経由（最後の手段）
-            try {
-                console.log('🔄 方法3: iframe経由');
-                const data = await fetchWithIframe();
-                console.log('✅ iframe成功:', data);
-                return data;
-            } catch (error) {
-                console.log('❌ iframe失敗:', error.message);
-            }
-            
-            throw new Error('全ての接続方法が失敗しました');
         }
         
         /**
-         * JSONP方式でデータ取得
+         * 最適化APIのデータ形式を旧形式に変換
          */
-        function fetchWithJSONP() {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'jsonpCallback_' + Date.now();
-                const timeoutId = setTimeout(() => {
-                    cleanup();
-                    reject(new Error('JSONP timeout'));
-                }, 15000);
-                
-                function cleanup() {
-                    if (window[callbackName]) {
-                        delete window[callbackName];
-                    }
-                    if (script && script.parentNode) {
-                        script.parentNode.removeChild(script);
-                    }
-                    clearTimeout(timeoutId);
-                }
-                
-                window[callbackName] = function(data) {
-                    console.log('📡 JSONP データ受信:', data);
-                    cleanup();
-                    resolve(data);
-                };
-                
-                const script = document.createElement('script');
-                script.src = TREE_SCRIPT_URL + '?callback=' + callbackName + '&_=' + Date.now();
-                script.onerror = () => {
-                    cleanup();
-                    reject(new Error('JSONP script error'));
-                };
-                
-                document.head.appendChild(script);
-            });
-        }
-        
-        /**
-         * iframe経由でデータ取得
-         */
-        function fetchWithIframe() {
-            return new Promise((resolve, reject) => {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = TREE_SCRIPT_URL + '?_=' + Date.now();
-                
-                const timeout = setTimeout(() => {
-                    document.body.removeChild(iframe);
-                    reject(new Error('iframe timeout'));
-                }, 10000);
-                
-                iframe.onload = () => {
-                    try {
-                        const content = iframe.contentDocument || iframe.contentWindow.document;
-                        const textContent = content.body.textContent || content.body.innerText;
-                        const data = JSON.parse(textContent);
-                        
-                        clearTimeout(timeout);
-                        document.body.removeChild(iframe);
-                        resolve(data);
-                    } catch (error) {
-                        clearTimeout(timeout);
-                        document.body.removeChild(iframe);
-                        reject(error);
-                    }
-                };
-                
-                iframe.onerror = () => {
-                    clearTimeout(timeout);
-                    document.body.removeChild(iframe);
-                    reject(new Error('iframe error'));
-                };
-                
-                document.body.appendChild(iframe);
-            });
+        function convertOptimizedAPIData(apiData) {
+            const stats = apiData.stats || {};
+            
+            return {
+                success: apiData.success || false,
+                totalPoints: stats.totalPoints || 0,
+                treeLevel: stats.level || 0,
+                dataCount: stats.totalEntries || 0,
+                categoryFruits: {
+                    thanks: stats.categories?.thanks || 0,
+                    respect: stats.categories?.respect || 0,
+                    praise: stats.categories?.praise || 0,
+                    challenge: stats.categories?.challenge || 0,
+                    other: stats.categories?.other || 0
+                },
+                performance: {
+                    optimized: true,
+                    source: 'Pre-calculated formulas',
+                    apiVersion: 'v2.3'
+                },
+                timestamp: apiData.timestamp || new Date().toISOString()
+            };
         }
         
         /**
@@ -657,13 +588,13 @@
             refreshButton.classList.add('loading');
             refreshButton.disabled = true;
             
-            addRecentUpdate('🔄 データ更新開始...');
+            addRecentUpdate('🚀 最適化API v2.3 接続中...');
             
             try {
-                const data = await fetchTreeDataSmart();
+                const data = await fetchTreeDataOptimized();
                 
-                if (data.status === 'error') {
-                    throw new Error(data.message || data.error);
+                if (!data.success) {
+                    throw new Error('APIレスポンスエラー');
                 }
                 
                 handleDataSuccess(data);
@@ -687,7 +618,8 @@
             const updateTime = new Date().toLocaleString('ja-JP');
             document.getElementById('lastUpdate').textContent = `最終更新: ${updateTime}`;
             
-            addRecentUpdate(`✅ 更新完了: Lv${data.treeLevel} (${data.totalPoints}pt)`);
+            const perfInfo = data.performance?.optimized ? ' ⚡最適化済み' : '';
+            addRecentUpdate(`✅ v2.3更新完了: Lv${data.treeLevel} (${data.totalPoints}pt)${perfInfo}`);
             
             finishLoading();
         }
@@ -1027,36 +959,36 @@
                 clearInterval(autoRefreshInterval);
             }
             
-            // 90秒ごとに自動更新
+            // 60秒ごとに自動更新（最適化により間隔短縮）
             autoRefreshInterval = setInterval(() => {
                 if (!isLoading) {
                     refreshData();
                 }
-            }, 90000);
+            }, 60000);
             
-            addRecentUpdate('🔄 自動更新開始（90秒間隔）');
+            addRecentUpdate('🔄 自動更新開始（60秒間隔・最適化版）');
         }
         
         /**
          * 初期化
          */
         function init() {
-            addRecentUpdate('🌳 アプリv2.2初期化中...');
-            addRecentUpdate('🔗 新URL接続準備完了');
+            addRecentUpdate('🚀 v2.3最適化版 初期化中...');
+            addRecentUpdate('⚡ 事前計算API接続準備完了');
             
-            console.log('🚨 使用中のApps Script URL:', TREE_SCRIPT_URL);
+            console.log('🚀 使用中の最適化 Apps Script URL:', TREE_SCRIPT_URL);
             
             // 初回データ取得
             setTimeout(() => {
                 refreshData();
-            }, 2000);
+            }, 1500);
             
             // 自動更新を開始
             setTimeout(() => {
                 startAutoRefresh();
             }, 5000);
             
-            addRecentUpdate('🎉 v2.2初期化完了');
+            addRecentUpdate('🎉 v2.3最適化版 初期化完了');
         }
         
         // ページ読み込み完了時に初期化
@@ -1076,16 +1008,17 @@
         
         // デバッグ用関数
         window.showConfig = () => {
-            console.log('🔧 現在の設定:');
-            console.log('- TREE_SCRIPT_URL:', TREE_SCRIPT_URL);
-            console.log('- GOOGLE_FORM_URL:', GOOGLE_FORM_URL);
+            console.log('🔧 v2.3最適化版 設定:');
+            console.log('- 最適化API URL:', TREE_SCRIPT_URL);
+            console.log('- Google Form URL:', GOOGLE_FORM_URL);
             console.log('- 接続試行回数:', connectionAttempts);
-            addRecentUpdate('🔧 設定情報をコンソールに表示');
+            console.log('- APIバージョン: v2.3 (事前計算式)');
+            addRecentUpdate('🔧 v2.3設定情報をコンソールに表示');
         };
         
         window.forceRefresh = refreshData;
         window.testConnection = () => {
-            console.log('🔗 接続テスト開始');
+            console.log('🔗 最適化API接続テスト開始');
             refreshData();
         };
     </script>
