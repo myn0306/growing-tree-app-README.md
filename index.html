@@ -228,11 +228,12 @@
         /* コントロールボタン */
         .controls {
             position: fixed;
-            top: 20px;
+            bottom: 10px;
             right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 4px;
+            height: 180px;
             z-index: 1001;
         }
         
@@ -240,7 +241,7 @@
             background: rgba(255, 255, 255, 0.95);
             color: #333;
             border: 2px solid rgba(255, 255, 255, 0.8);
-            padding: 10px 16px;
+            padding: 12px 16px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
@@ -252,6 +253,7 @@
             display: inline-block;
             text-align: center;
             min-width: 120px;
+            flex: 1;
         }
         
         .btn:hover {
@@ -296,15 +298,16 @@
         .status-panel {
             position: fixed;
             bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 10px;
             z-index: 100;
-            max-width: min(400px, 90vw);
+            max-width: min(350px, 45vw);
+            height: 180px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
         }
         
         .panel-header {
@@ -332,18 +335,18 @@
         }
         
         .stats {
-            padding: 8px 12px;
+            padding: 6px 10px;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 8px;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            margin-bottom: 6px;
         }
         
         .stat-item {
-            font-size: 11px;
+            font-size: 9px;
             color: #2F4F4F;
             display: flex;
             justify-content: space-between;
@@ -356,33 +359,36 @@
         }
         
         .category-line {
-            font-size: 8px;
+            font-size: 7px;
             color: #666;
             text-align: center;
-            margin: 6px 0;
+            margin: 4px 0;
             line-height: 1.2;
         }
         
         .recent-updates {
             background: #f8f9fa;
             border-radius: 6px;
-            padding: 6px;
-            margin-top: 6px;
+            padding: 4px;
+            margin-top: 4px;
+            height: 50px;
+            overflow-y: auto;
         }
         
         .recent-title {
-            font-size: 9px;
+            font-size: 8px;
             color: #666;
             font-weight: 500;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         
         .update-entry {
-            font-size: 8px;
+            font-size: 7px;
             color: #333;
-            margin-bottom: 2px;
-            padding: 2px 0;
+            margin-bottom: 1px;
+            padding: 1px 0;
             border-bottom: 1px solid #eee;
+            line-height: 1.2;
         }
         
         .update-entry:last-child {
@@ -391,27 +397,33 @@
         }
         
         .last-update {
-            font-size: 7px;
+            font-size: 6px;
             color: #999;
             text-align: center;
-            margin-top: 4px;
+            margin-top: 3px;
         }
         
         /* モバイル対応 */
         @media (max-width: 768px) {
             .tree-container { width: 85vw; height: 55vh; bottom: 25%; }
-            .controls { top: 10px; right: 10px; gap: 6px; }
+            .controls { bottom: 10px; right: 10px; gap: 3px; height: 160px; }
             .btn { padding: 8px 12px; font-size: 11px; min-width: 100px; }
             .fruit { width: 12px; height: 12px; }
-            .status-panel { bottom: 5px; max-width: 95vw; }
+            .status-panel { bottom: 10px; left: 5px; max-width: min(320px, 50vw); height: 160px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 3px; }
             .ground { height: 20%; }
             .sky { height: 80%; }
         }
         
         @media (max-width: 480px) {
-            .controls { flex-direction: row; top: 5px; right: 5px; left: 5px; justify-content: space-between; }
-            .btn { padding: 6px 8px; font-size: 10px; min-width: auto; flex: 1; margin: 0 2px; }
+            .controls { bottom: 10px; right: 5px; gap: 2px; height: 140px; }
+            .btn { padding: 6px 8px; font-size: 10px; min-width: 80px; }
             .tree-container { bottom: 28%; height: 50vh; }
+            .status-panel { bottom: 10px; left: 5px; max-width: min(280px, 55vw); height: 140px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+            .stat-item { font-size: 9px; }
+            .category-line { font-size: 6px; }
+            .recent-updates { height: 40px; }
         }
     </style>
 </head>
@@ -725,8 +737,8 @@
             });
             
             recentUpdates.unshift(`${time}: ${message}`);
-            if (recentUpdates.length > 3) {
-                recentUpdates = recentUpdates.slice(0, 3);
+            if (recentUpdates.length > 2) {
+                recentUpdates = recentUpdates.slice(0, 2);
             }
             
             const listElement = document.getElementById('recentUpdatesList');
